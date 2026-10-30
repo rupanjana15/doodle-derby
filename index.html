@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+  <title>Doodle Derby</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Permanent+Marker&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+<body>
+  <canvas id="game"></canvas>
+
+  <!-- Garage -->
+  <section id="garage" class="panel">
+    <h1 class="logo">Doodle<br />Derby</h1>
+    <p class="tag">Draw it. Vi3W it. Race it.</p>
+
+    <div id="player-tabs" class="player-tabs"></div>
+
+    <h3 class="sec">Car</h3>
+    <div id="car-list" class="car-list"></div>
+
+    <h3 class="sec">Paint</h3>
+    <div id="paints" class="paints"></div>
+    <p id="paint-note" class="note hidden">Vi3W cars keep their own texture.</p>
+
+    <h3 class="sec">Handling <span id="points-left" class="points"></span></h3>
+    <div id="presets" class="presets"></div>
+    <div id="tune" class="tune"></div>
+
+    <div class="row">
+      <button id="btn-rotate" class="btn small" title="Turn the model if it faces the wrong way">↻ Rotate model</button>
+      <button id="btn-sketch" class="btn small">✏️ Draw a car</button>
+    </div>
+
+    <label class="drop-hint" id="drop-hint">
+      <input type="file" id="file-input" accept=".glb,.gltf,image/*" multiple hidden />
+      Drop your <b>Vi3W .glb</b> here<br /><small>(add the sketch image too, if you have it)</small>
+    </label>
+
+    <h3 class="sec">Race</h3>
+    <div class="setup">
+      <span>Opponents</span>
+      <div class="stepper"><button class="btn small" data-step="opponents" data-d="-1">−</button><b id="val-opponents"></b><button class="btn small" data-step="opponents" data-d="1">+</button></div>
+      <span>Laps</span>
+      <div class="stepper"><button class="btn small" data-step="laps" data-d="-1">−</button><b id="val-laps"></b><button class="btn small" data-step="laps" data-d="1">+</button></div>
+      <span>Rivals</span>
+      <div id="difficulty" class="presets"></div>
+    </div>
+
+    <button id="btn-race" class="btn big">RACE!</button>
+    <p id="keys" class="keys"></p>
+  </section>
+
+  <!-- HUD: one block per player, built in main.js -->
+  <section id="hud" class="hidden">
+    <div id="sketch-badge" class="sketch-badge hidden"><img alt="" /><span>your sketch</span></div>
+  </section>
+
+  <div id="countdown" class="countdown hidden"></div>
+
+  <!-- Results -->
+  <section id="results" class="panel center hidden">
+    <h2 id="res-title">Finished!</h2>
+    <div id="res-body"></div>
+    <div class="row">
+      <button id="btn-again" class="btn">Race again</button>
+      <button id="btn-garage" class="btn">Garage</button>
+    </div>
+  </section>
+
+  <!-- Sketch pad -->
+  <section id="sketchpad" class="modal hidden">
+    <div class="panel center">
+      <h2>Draw your car</h2>
+      <p class="small">Side view works best. Save it, upload to <b>Vi3W</b>, then drop the .glb back in the garage.</p>
+      <canvas id="sketch-canvas" width="640" height="420"></canvas>
+      <div class="row">
+        <button class="btn small" data-tool="pen">✏️ Pen</button>
+        <button class="btn small" data-tool="eraser">🧽 Eraser</button>
+        <button class="btn small" id="sk-clear">Clear</button>
+      </div>
+      <div class="row">
+        <button class="btn" id="sk-save">Save sketch PNG</button>
+        <button class="btn" id="sk-close">Close</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Touch controls -->
+  <div id="touch" class="touch hidden">
+    <div class="tleft">
+      <button data-k="left">◀</button><button data-k="right">▶</button>
+    </div>
+    <div class="tright">
+      <button data-k="boost">🔥</button><button data-k="drift">⤳</button><button data-k="brake">▼</button><button data-k="gas">▲</button>
+    </div>
+  </div>
+
+  <div id="loading" class="loading hidden">Loading model…</div>
+
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,3 @@
+[
+  { "name": "Crystal Drill", "model": "cars/crystal-drill.glb", "sketch": "cars/crystal-drill-sketch.png", "preset": "heavy", "turns": 3, "extras": ["crystals"] }
+]

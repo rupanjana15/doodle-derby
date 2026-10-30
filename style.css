@@ -1,0 +1,165 @@
+:root {
+  --paper: #fbf7ee;
+  --ink: #1d1b1a;
+  --accent: #ff5a36;
+  --accent2: #2f7cf6;
+  --muted: #6d665c;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; overflow: hidden; background: var(--paper); color: var(--ink); font-family: 'Patrick Hand', system-ui, sans-serif; }
+#game { position: fixed; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
+.hidden { display: none !important; }
+.small { font-size: 0.9em; }
+.mono { font-variant-numeric: tabular-nums; }
+
+/* hand-drawn boxes: slightly wobbly radius + offset shadow */
+.panel {
+  position: fixed; z-index: 5;
+  background: var(--paper);
+  border: 3px solid var(--ink);
+  border-radius: 18px 6px 16px 8px / 8px 16px 6px 18px;
+  box-shadow: 6px 6px 0 var(--ink);
+  padding: 18px 20px;
+}
+.panel.center { left: 50%; top: 50%; transform: translate(-50%, -50%); text-align: center; max-width: calc(100vw - 32px); }
+
+#garage { left: 20px; top: 20px; bottom: 20px; width: 340px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+.logo { font-family: 'Permanent Marker', cursive; font-size: 44px; line-height: 0.95; margin: 0; transform: rotate(-3deg); color: var(--accent); text-shadow: 3px 3px 0 var(--ink); }
+.tag { margin: -4px 0 0; color: var(--muted); font-size: 20px; }
+
+.car-list { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.car-card {
+  border: 2.5px solid var(--ink); border-radius: 12px 4px 10px 5px; background: #fff;
+  padding: 6px; cursor: pointer; text-align: center; font: inherit; font-size: 17px; color: var(--ink);
+  transition: transform .12s;
+}
+.car-card:hover { transform: rotate(-1.5deg) scale(1.03); }
+.car-card.sel { background: #fff3b0; box-shadow: 3px 3px 0 var(--ink); }
+.car-card .thumb { height: 70px; display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 6px; margin-bottom: 4px; }
+.car-card .thumb img { max-width: 100%; max-height: 70px; }
+.car-card .swatch { width: 70%; height: 30px; border: 2.5px solid var(--ink); border-radius: 10px 10px 4px 4px; }
+.car-card .src { display: block; font-size: 13px; color: var(--muted); }
+
+.preset-row .label { font-size: 18px; }
+.presets { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.presets button { flex: 1; }
+.presets button.sel { background: var(--ink); color: var(--paper); }
+
+.row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+.btn {
+  font: inherit; font-size: 20px; cursor: pointer; color: var(--ink);
+  background: #fff; border: 2.5px solid var(--ink); border-radius: 10px 4px 10px 4px;
+  padding: 6px 14px; box-shadow: 3px 3px 0 var(--ink);
+}
+.btn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--ink); }
+.btn.small { font-size: 16px; padding: 4px 10px; flex: 1; }
+.btn.big { font-family: 'Permanent Marker', cursive; font-size: 30px; background: var(--accent); color: #fff; padding: 8px; text-shadow: 2px 2px 0 var(--ink); }
+
+.drop-hint {
+  display: block; border: 2.5px dashed var(--muted); border-radius: 12px; padding: 12px; text-align: center;
+  color: var(--muted); cursor: pointer; font-size: 18px;
+}
+.drop-hint.over, body.dragging .drop-hint { border-color: var(--accent2); color: var(--accent2); background: #eef4ff; }
+.keys { margin: 0; text-align: center; color: var(--muted); font-size: 15px; }
+
+/* garage extras */
+.sec { margin: 4px 0 -4px; font-size: 20px; font-weight: normal; border-bottom: 2px dashed #cfc6b4; display: flex; justify-content: space-between; }
+.points { color: var(--muted); font-size: 16px; }
+.points.left { color: var(--accent); }
+.player-tabs { display: flex; gap: 6px; }
+.player-tabs .btn { flex: 1; font-size: 18px; padding: 4px 8px; }
+.player-tabs .btn.sel { background: var(--ink); color: var(--paper); }
+.player-tabs .btn.add { border-style: dashed; box-shadow: none; color: var(--muted); }
+.player-tabs .x { margin-left: 6px; opacity: .7; }
+.car-card { position: relative; }
+.car-card .who { position: absolute; top: 4px; right: 4px; display: flex; gap: 3px; }
+.car-card .who i { font-style: normal; font-size: 12px; background: var(--ink); color: var(--paper); border-radius: 6px; padding: 0 5px; }
+.car-card .who i.p2 { background: var(--accent2); }
+.paints { display: flex; flex-wrap: wrap; gap: 7px; }
+.paints button { width: 28px; height: 28px; border-radius: 50% 45% 50% 40%; border: 2.5px solid var(--ink); cursor: pointer; padding: 0; }
+.paints button.sel { outline: 3px solid var(--accent); outline-offset: 2px; }
+.paints button.auto { background: repeating-linear-gradient(45deg, #fff 0 4px, #ddd 4px 8px); }
+.paints.off { opacity: .35; pointer-events: none; }
+.note { margin: 0; font-size: 14px; color: var(--muted); }
+.tune { display: grid; grid-template-columns: auto 1fr; gap: 4px 10px; align-items: center; font-size: 17px; }
+.tune .ctl { display: flex; align-items: center; gap: 6px; }
+.tune .ctl button { width: 26px; height: 26px; padding: 0; font: inherit; font-size: 18px; line-height: 1; border: 2px solid var(--ink); background: #fff; border-radius: 6px; cursor: pointer; }
+.tune .ctl button:disabled { opacity: .3; cursor: default; }
+.pips { display: flex; gap: 3px; }
+.pips i { width: 16px; height: 12px; border: 2px solid var(--ink); border-radius: 4px 2px 5px 2px; }
+.pips i.on { background: var(--accent); }
+.setup { display: grid; grid-template-columns: auto 1fr; gap: 6px 10px; align-items: center; font-size: 18px; }
+.stepper { display: flex; align-items: center; gap: 8px; }
+.stepper .btn.small { flex: 0 0 auto; width: 34px; padding: 0; }
+.stepper b { min-width: 22px; text-align: center; font-size: 22px; }
+.btn:disabled { opacity: .4; }
+
+/* HUD */
+#hud { position: fixed; inset: 0; pointer-events: none; z-index: 4; font-size: 26px; }
+.phud { position: absolute; inset: 0; }
+#hud.two #phud-0 { bottom: 50%; }
+#hud.two #phud-1 { top: 50%; border-top: 4px solid var(--ink); }
+#hud.two { font-size: 20px; }
+#hud.two .hud-tr { font-size: 46px; }
+#hud.two .hud-speed { font-size: 40px; bottom: 12px; }
+.ptag { position: absolute; left: 50%; top: 10px; transform: translateX(-50%); font-family: 'Permanent Marker', cursive; font-size: 22px; background: var(--ink); color: var(--paper); padding: 0 12px; border-radius: 8px; }
+.ptag.p2 { background: var(--accent2); }
+.boostbar { position: absolute; left: 50%; bottom: 18px; transform: translateX(-50%); width: min(260px, 40vw); height: 22px; border: 3px solid var(--ink); border-radius: 10px 4px 10px 4px; background: rgba(255,255,255,.75); overflow: hidden; }
+.boostbar .fill { height: 100%; width: 0; background: repeating-linear-gradient(-45deg, #ff8a3d 0 8px, #ffb35c 8px 16px); }
+.boostbar span { position: absolute; inset: 0; text-align: center; font-size: 15px; line-height: 16px; }
+.boostbar.on { box-shadow: 0 0 0 3px #ffb35c; }
+.pmsg { position: absolute; left: 50%; top: 38%; transform: translate(-50%, -50%); font-family: 'Permanent Marker', cursive; font-size: 40px; color: var(--accent); text-shadow: 3px 3px 0 var(--ink); opacity: 0; transition: opacity .3s; white-space: nowrap; }
+.pmsg.show { opacity: 1; }
+.hud-tl { position: absolute; left: 20px; top: 16px; text-shadow: 2px 2px 0 var(--paper); }
+.hud-tl #hud-lap { font-family: 'Permanent Marker', cursive; font-size: 32px; }
+.hud-tr { position: absolute; right: 24px; top: 8px; font-family: 'Permanent Marker', cursive; font-size: 64px; color: var(--accent); text-shadow: 3px 3px 0 var(--ink); }
+.hud-tr sup { font-size: 28px; }
+.hud-tr small { font-size: 26px; color: var(--ink); text-shadow: none; }
+.hud-speed { position: absolute; right: 28px; bottom: 20px; font-family: 'Permanent Marker', cursive; font-size: 54px; text-shadow: 3px 3px 0 var(--paper); }
+.hud-speed small { font-size: 20px; margin-left: 4px; }
+.sketch-badge {
+  position: absolute; left: 20px; bottom: 20px; z-index: 1; background: #fff; border: 2.5px solid var(--ink);
+  border-radius: 10px 4px 10px 4px; padding: 6px; transform: rotate(-4deg); box-shadow: 4px 4px 0 var(--ink); text-align: center; font-size: 16px;
+}
+.sketch-badge img { display: block; width: 140px; max-height: 100px; object-fit: contain; }
+
+.countdown {
+  position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 6; pointer-events: none;
+  font-family: 'Permanent Marker', cursive; font-size: 160px; color: var(--accent); text-shadow: 6px 6px 0 var(--ink);
+}
+.countdown.pop { animation: pop .5s ease-out; }
+@keyframes pop { from { transform: scale(1.8) rotate(-8deg); opacity: 0; } to { transform: scale(1) rotate(0); opacity: 1; } }
+
+#results h2 { font-family: 'Permanent Marker', cursive; font-size: 42px; margin: 0 0 8px; color: var(--accent); }
+#res-body { font-size: 22px; margin-bottom: 14px; }
+#res-body table { margin: 0 auto; border-collapse: collapse; }
+#res-body td { padding: 2px 10px; text-align: left; }
+#res-body tr.me { background: #fff3b0; }
+
+.modal { position: fixed; inset: 0; z-index: 10; background: rgba(29,27,26,.35); }
+.modal h2 { font-family: 'Permanent Marker', cursive; margin: 0; }
+#sketch-canvas { background: #fff; border: 2.5px solid var(--ink); border-radius: 8px; width: min(640px, calc(100vw - 80px)); height: auto; touch-action: none; cursor: crosshair; margin: 8px 0; }
+#sketchpad .row { margin-top: 6px; }
+#sketchpad .btn.small { flex: 0 1 auto; }
+#sketchpad .btn.sel { background: var(--ink); color: var(--paper); }
+
+.loading { position: fixed; left: 50%; top: 20px; transform: translateX(-50%); z-index: 20; background: #fff; border: 2.5px solid var(--ink); border-radius: 10px; padding: 6px 14px; font-size: 20px; }
+
+/* touch */
+.touch { position: fixed; inset: auto 0 0 0; z-index: 4; display: flex; justify-content: space-between; padding: 16px; pointer-events: none; }
+.touch > div { display: flex; gap: 12px; pointer-events: auto; align-items: flex-end; }
+.touch .tright { display: grid; grid-template-columns: repeat(2, auto); gap: 10px; }
+.touch button { width: 64px; height: 64px; font-size: 30px; border-radius: 50%; border: 3px solid var(--ink); background: rgba(255,255,255,.8); color: var(--ink); touch-action: none; user-select: none; -webkit-user-select: none; }
+.touch button.on { background: var(--accent); color: #fff; }
+
+@media (max-width: 720px) {
+  #garage { left: 16px; right: 16px; top: auto; bottom: 16px; width: auto; max-height: 58vh; }
+  .logo { font-size: 32px; }
+  .hud-tr { font-size: 44px; }
+  .hud-speed { bottom: 170px; font-size: 38px; }
+  .boostbar { top: 16px; bottom: auto; width: 34vw; }
+  .touch button { width: 60px; height: 60px; font-size: 26px; }
+  .sketch-badge { display: none; }
+  .countdown { font-size: 110px; }
+}
